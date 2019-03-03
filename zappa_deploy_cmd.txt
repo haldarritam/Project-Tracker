@@ -1,1 +1,0 @@
-/Users/FelipeClark/Desktop/Assignment3/venv/bin/python /Users/FelipeClark/Desktop/Assignment3/venv/bin/zappa update dev

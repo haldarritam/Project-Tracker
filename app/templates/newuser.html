@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script type="text/javascript">
+
+	function ShowCam() {
+    Webcam.set({
+        width: 320,
+        height: 240,
+        image_format: 'jpeg',
+        jpeg_quality: 100
+    });
+    Webcam.attach('#my_camera');
+}
+window.onload= ShowCam;
+
+function snap() {
+    Webcam.snap( function(data_uri) {
+        // display results in page
+        document.getElementById('results').innerHTML =
+        '<img id="image" src="'+data_uri+'"/>';
+      } );
+}
+
+function upload() {
+    console.log("Uploading...")
+    var image = document.getElementById('image').src;
+    var form = document.getElementById('registration');
+    var formData = new FormData(form);
+    formData.append("file", image);
+    $("#var1").val(formData.get('username'));
+	$("#var2").val(formData.get('first_name'));
+	$("#var3").val(formData.get('last_name'));
+	$("#var4").val(formData.get('email'));
+	$("#var5").val(formData.get('password'));
+	$("#var6").val(formData.get('password_conf'));
+	$("#var7").val(formData.get('file'));
+	$("#form").submit();
+}
+	</script>
+
+<header>
+  	<h2>Issue Tracker</h2>
+	</header>
+
+	<section>
+    <nav>
+        <ul>
+			  <li><a href="{{url_for('sign_out')}}">Log In</a></li>
+			  <li><a class="active" href="#home">Sign Up</a></li>
+			  <li><a href="{{url_for('forgotpwd')}}">Forgot Password</a></li>
+        </ul>
+    </nav>
+    <article>
+    <form name="registration" method="post" id="registration">
+        <legend style="margin-top:40px;">
+        <h1>Create your Project Tracker account</h1></legend>
+
+                {% if error %}
+                <br/>
+                {% endif %}
+                {% for err in error%}
+                <span style="color:red;">{{ err }}</span><br/>
+                {% endfor %}
+                <br/>
+                <div class="text-input">
+                <input type="text" name="username" value="{{username if username!=None}}"
+                       required pattern="^[a-zA-Z][a-zA-Z0-9-_\.]{1,20}$"
+                       title="Up to 20 characters, numbers and -_\."
+                       style="text-align: center;" placeholder="User Name" id="username"/>
+                <label for="username">Username</label><br/>
+                </div>
+                <div class="text-input">
+                <input type="text" name="first_name" value="{{first_name if first_name!=None}}"
+                       required pattern="[a-zA-Z ]{3,45}$"
+                       title="From 3 to 45 characters (spaces included). No special characters or numbers."
+                       style="text-align: center;" placeholder="First name" id="firstname"/>
+                <label for="firstname">First Name</label><br/>
+                </div>
+                <div class="text-input">
+                <input type="text" name="last_name" value="{{last_name if last_name!=None}}"
+                       required pattern="^[a-zA-Z ][a-zA-Z0-9-. ]{1,100}$"
+                       title="Up to 100 characters (spaces included), numbers and -."
+                       style="text-align: center;" placeholder="Last name" id="lastname"/>
+                <label for="lastname">Last Name</label><br/>
+                </div>
+                <div class="email-input">
+                <input type="email" name="email" value="{{email if email!=None}}"
+                       required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+                       style="text-align: center;" placeholder="email" id="email"/>
+                <label for="email">Email</label><br/>
+                </div>
+                <div class="pwd-input">
+                <input type="password" name="password" value=""
+                       required pattern="(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$"
+                       title="Minimum length: 8. Must include at least one uppercase and one lowercase character, one number and one special character"
+                       style="text-align: center;" placeholder="Password" id="pwd"/>
+                    <label for="pwd">Password</label><br/>
+                </div>
+                <div class="pwd-input">
+                <input type="password" name="password_conf" value=""
+                       required placeholder="Confirm password"
+                       style="text-align: center;" title="Must match the password" id="cpwd"/>
+                    <label for="cpwd">Confirm Password</label><br/><br/>
+                </div>
+        </form>
+
+                <br>
+
+                <div id="my_camera"></div>
+                <input type="button" class="button" value="Take Snapshot" onclick="snap()">
+                <div id="results"></div>
+                <input type="button" class="button" value="Submit" onclick="upload()">
+                <form style="display: hidden" action="{{url_for('create_user')}}" method="POST" id="form">
+                  <input type="hidden" id="var1" name="var1" value=""/>
+                  <input type="hidden" id="var2" name="var2" value=""/>
+                  <input type="hidden" id="var3" name="var3" value=""/>
+                  <input type="hidden" id="var4" name="var4" value=""/>
+                  <input type="hidden" id="var5" name="var5" value=""/>
+                  <input type="hidden" id="var6" name="var6" value=""/>
+                  <input type="hidden" id="var7" name="var7" value=""/>
+                </form>
+    </article>
+    </section>
+{% endblock %}

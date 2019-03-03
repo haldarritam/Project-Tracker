@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <header>
+        <h2>Project Tracker</h2>
+    </header>
+
+<section>
+  <nav>
+    <ul>
+	  <li><a href="{{url_for('render_main_issue_list')}}">Home</a></li>
+	  <li><a class="active" href="#home">New Issue</a></li>
+	  <li><a href="{{url_for('sign_out')}}">Sign Out</a></li>
+	</ul>
+  </nav>
+
+    <article>
+    <div style="float: left">
+    {% if not db_success %}
+    <span style="color:red;">Something went wrong wile recording the last issue. Please try again.</span><br/></br>
+    {% endif %}
+
+<form method="post" action="{{url_for('new_issue_landing')}}">
+    <div class="text-input">
+    <input type="text" id="project" name="project" list="projects" autocomplete=off onchange="this.form.submit()"
+    {% if selected_project %} value="{{selected_project}}" {% endif %}/>
+        <label for="project">Project</label>
+    <datalist id="projects">
+        {% for project in projects %}
+        <option value="{{project}}">{{project}}</option>
+        {% endfor %}
+    </datalist>
+    </div>
+        <input type="hidden" id="document" name ="document">
+        <input type="hidden" id="issues_so_far" name ="issues_so_far" value="{{issues_so_far}}">
+</form>
+
+{% if selected_project %}
+<form method="post" action="{{url_for('new_issue_landing')}}" style="float:left;">
+    <div class="text-input">
+    <input type="text" id="document" name="document" list="documents" autocomplete=off onchange="this.form.submit()"
+    {% if selected_document %} value="{{selected_document}}" {% endif %} />
+        <label for="document">Document</label>
+    <datalist id="documents">
+        {% for document in documents %}
+        <option value="{{document}}">{{document}}</option>
+        {% endfor %}
+    </datalist>
+    </div>
+
+    <div class="hidden-input">
+
+        <input type="hidden" id="project" name="project" value="{{selected_project}}"/>
+
+    </div>
+    <div class="hidden-input">
+    <input type="hidden" id="issues_so_far" name ="issues_so_far" value="{{issues_so_far}}">
+
+    </div>
+</form>
+{% endif %}
+<br/>
+
+{% if selected_project and selected_document %}
+<form method="post" action="{{url_for('new_issue_landing')}}">
+
+    <select name="discipline" id="discipline" onchange="this.form.submit()">
+        <option disabled selected value> <b>-- Select a discipline --</b> </option>
+        {% for discipline in disciplines %}
+        <option value="{{discipline}}" {% if selected_discipline == discipline %} selected="selected" {% endif %}>{{discipline}}</option>
+        {% endfor %}
+    </select>
+    <label for="discipline">Discipline</label>
+    <div class="hidden-input">
+    <input type="hidden" id="project" name="project" value="{{selected_project}}">
+    </div>
+    <div class="hidden-input">
+    <input type="hidden" id="document" name ="document" value="{{selected_document}}">
+    </div>
+    <div class="hidden-input">
+    <input type="hidden" id="issues_so_far" name ="issues_so_far" value="{{issues_so_far}}">
+        </div>
+</form>
+{% endif %}
+
+{% if selected_project and selected_document and selected_discipline%}
+<form method="post" action="{{url_for('new_issue_landing')}}" id="input_issue">
+    <textarea rows="3" cols="70" name="issue" placeholder="Enter issue description..." required></textarea>
+    <input type="hidden" id="project" name="project" value="{{selected_project}}"/>
+    <input type="hidden" id="document" name ="document" value="{{selected_document}}"/>
+    <input type="hidden" id="discipline" name ="discipline" value="{{selected_discipline}}"/>
+    <input type="hidden" id="issues_so_far" name ="issues_so_far" value="{{issues_so_far}}"/>
+    <br>
+    <input type="submit" class="button" value="Add issue"/>
+</form>
+{% endif %}
+
+{% if issues_so_far %}
+<textarea readonly rows="3" cols="70" name="issues_so_far_text">
+{{issues_so_far}}
+</textarea>
+{% endif %}
+</div>
+</article>
+</section>
+
+{% endblock %}
